@@ -25,6 +25,7 @@ const PomodoroTimer = () => {
 
   useEffect(() => {
     restart(getExpiryTimestamp(), enableAutoStart)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWorkTime])
 
   const start = () => {
