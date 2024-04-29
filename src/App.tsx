@@ -1,42 +1,26 @@
-import { useTimer } from 'react-timer-hook'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { CustomButton } from './components/CutomButton'
-import { useState, useEffect } from 'react'
+import { useCountDownTimer } from './hooks/useCountDownTimer'
 
 const PomodoroTimer = () => {
   const workDuration = 25 * 60 // 25 minutes
   const breakDuration = 5 * 60 // 5 minutes
-  const [isWorkTime, setIsWorkTIme] = useState(true)
-  const enableAutoStart = false
+  const [isWorkTime, setIsWorkTime] = useState(true)
 
-  const getExpiryTimestamp = (): Date => {
-    const time = new Date()
-    time.setSeconds(
-      time.getSeconds() + (isWorkTime ? workDuration : breakDuration)
-    )
-    return time
+  const getExpiryTime = (): number => {
+    return isWorkTime ? workDuration : breakDuration
   }
 
-  const { seconds, minutes, isRunning, pause, resume, restart } = useTimer({
-    expiryTimestamp: getExpiryTimestamp(),
-    autoStart: enableAutoStart,
-    onExpire: () => setIsWorkTIme(!isWorkTime),
+  const { seconds, minutes, start, stop, reset } = useCountDownTimer({
+    expirySeconds: getExpiryTime(),
+    onExpire: () => setIsWorkTime(!isWorkTime),
   })
 
   useEffect(() => {
-    restart(getExpiryTimestamp(), enableAutoStart)
+    reset(getExpiryTime())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWorkTime])
-
-  const start = () => {
-    if (isRunning) return
-    resume()
-  }
-
-  const stop = () => {
-    if (!isRunning) return
-    pause()
-  }
 
   // 0詰め
   const formattesMunites = minutes.toString().padStart(2, '0')
